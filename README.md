@@ -21,7 +21,7 @@ In addition, the index table stores the pointer array and two auxiliary arrays w
 
 ## Installation
 ### Cloning from GIT
-If you want to compile the most recent version, simply clone the git repository. Then, from the repository root, initialize the libconjugrad submodule:
+If you want to compile the most recent version, simply clone the git repository. 
 
         git clone git@bitbucket.org:soedinglab/mmseqs.git
 
