@@ -48,8 +48,29 @@ Then build the MMseqs binaries:
 
 MMseqs binaries are now located in $MMDIR/bin.
 
-## Using MMseqs 
-### Clustering
+## Overview of MMseqs
+MMseqs contains six binaries. Three commands execute complete workflows that combine MMseqs core modules. 
+The other three commands execute the single modules which are used by the workflows and are available for advanced users.
+
+### Workflows
+* `mmseqs_search` Compares all sequences in the query database with all sequences in the target database.
+* `mmseqs_cluster` Clusters the sequences in the input database by sequence similarity.
+* `mmseqs_update` Given an existing clustering of a sequence database and a new version of the sequence database (with some new sequences being added and others having been deleted), MMseqs incrementally updates the existing clustering.
+### Single modules
+* `mmseqs_pref` Computes k-mer similarity scores between all sequences in the query database and all sequences in the target database.
+* `mmseqs_aln` Computes Smith-Waterman alignment scores between all sequences in the query database and the sequences of the target database whose prefiltering scores computed by `mmseqs_pref` pass a minimum threshold.
+* `mmseqs_clu` Computes a similarity clustering of a sequence database based on Smith-Waterman alignment scores of the sequence pairs computed by `mmseqs_aln`.
+
+### FFindex Database Format
+
+All modules take ffindex databases as input and produce ffindex databases as output. ffindex was developed to avoid drastically slowing down the file system when millions of files need to be written and accessed. ffindex hides the files from the file system by storing them as unstructured data records in a single data file. In addition to this data file, an ffindex database includes a second index file: 
+This index file stores an unique accession code, the start position in bytes of the data record in the FFindex data file and the length of the record for each file. When transforming a FASTA file with multiple sequences into an ffindex database, the accession code is the ID of the sequence parsed from the header. If no ID can be identified, the accession code is the whole header without the > character before the first blank space.
+
+The binaries `fasta2ffindex` and `ffindex2fasta` located in mmseqs/bin do the format conversion from and to the ffindex database format. `fasta2ffindex` generates a ffindex database from a FASTA sequence database. `ffindex2fasta` converts an ffindex database to a FASTA formatted text file: the headers are ffindex accession codes preceded by >, with the corresponding dataset from the ffindex data file following.
+However, for a fast access to the particular datasets in very large databases it is advisable￼to use the ffindex database directly without converting. We offer the binary `ffindex_get` ($MMDIR/lib/ffindex/src/) for direct access to the datasets stored in an ffindex database.
+
+
+### How to cluster 
 Before clustering, convert your FASTA database into ffindex format:
 
         fasta2ffindex DB.fasta DB
@@ -69,7 +90,7 @@ To run the more sensitive cascaded clustering and convert the result into FASTA 
         mmseqs_cluster DB DB_clu_s7 tmp --cascaded -s 7
         ffindex2fasta DB_clu_s7 DB_clu_s7.fasta
 
-### Searching
+### How to search
 You can use the query database queryDB.fasta and target database targetDB.fasta to test the search workflow.
 Before clustering, you need to convert your database containing query sequences (queryDB.fasta) and your target database (targetDB.fasta) into ffindex format:
 
