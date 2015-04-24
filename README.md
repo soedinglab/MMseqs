@@ -6,17 +6,17 @@ MMseqs is around 1000 times faster than protein BLAST and sensitive enough to ca
 
 To compile from source, you will need:
 
-  * a recent C and C++ compiler (We suggest GCC 4.4 or later).
+  * a recent C and C++ compiler (Minimum requirement is GCC 4.4. GCC 4.8 or later is recommended).
 
 ### Memory Requirements
-When using mmseqs the available memory limits the size of database you will be able to compute. 
+When using MMseqs the available memory limits the size of database you will be able to compute. 
 We recommend at least 128 GB of RAM so you can compute databases up to 50.000.000 entries:
 
 You can calculate the memory requirements in bytes for L columns and N rows using the following formula:
         
         M = (4*N*L + 8*a^k) byte
 
-MMseqs stores an index table and two auxiliary arrays, which have a total size of M.
+MMseqs stores an index table and two auxiliary arrays, which have a total size of M byte.
 
 For a database containing N sequences with an average length L, the memory consumption of the index table is `(4*N*L) byte`.
 Note that the memory consumption grows linearly with the number of the sequences N in the database.
@@ -48,7 +48,7 @@ Then build the MMseqs binaries:
 
 MMseqs binaries are now located in $MMDIR/bin.
 
-## Run MMseqs 
+## Using MMseqs 
 ### Clustering
 Before clustering, convert your FASTA database into ffindex format:
 
@@ -91,7 +91,7 @@ Then convert the result ffindex database into a FASTA formatted database:
 
         ffindex2fasta outDB outDB.fasta
 
-## License terms
+## License Terms
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
