@@ -6,18 +6,22 @@ MMseqs is around 1000 times faster than protein BLAST and sensitive enough to ca
 
 To compile from source, you will need:
 
-  * a recent C compiler (we suggest GCC 4.4 or later)
+  * a recent C and C++ compiler (We suggest GCC 4.4 or later).
 
-### Memory Requirement 
-When doing computations on the, the available memory limits the size of database you will be able to compute. 
+### Memory Requirements
+When using mmseqs the available memory limits the size of database you will be able to compute. 
 We recommend at least 128 GB of RAM so you can compute databases up to 50.000.000 entries:
 
 You can calculate the memory requirements in bytes for L columns and N rows using the following formula:
         
         M = (4*N*L + 8*a^k) byte
 
-For a database containing N sequences with an average length L, the memory consumption of the index lists is `(4*N*L) byte`. Note that the memory consumption grows linearly with the size of the sequence database. 
-In addition, the index table stores the pointer array and two auxiliary arrays with the memory consumption where a is the size of the amino acid alphabet (usually 21 including the unknown amino acid X) and k is the k-mer size.
+MMseqs stores an index table and two auxiliary arrays, which have a total size of M.
+
+For a database containing N sequences with an average length L, the memory consumption of the index table is `(4*N*L) byte`.
+Note that the memory consumption grows linearly with the number of the sequences N in the database.
+
+The two auxiliary arrays consume `(8*a^k) byte`, with a being the size of the amino acid alphabet (usually 21 including the unknown amino acid X) and the  k-mer size k.
 
 ## Installation
 ### Cloning from GIT
@@ -31,13 +35,13 @@ First, set environment variables:
         export MMDIR=$HOME/path/to/mmseqs/
         export PATH=$PATH:$MMDIR/bin
 
-MMseqs uses ffindex, a fast and simple database for wrapping and accessing huge amounts of small files. Setting the environment variable `LD_LIBRARY_PATH` ensures that ffindex binaries are in the path:
+MMseqs uses ffindex, a fast and simple database for wrapping and accessing a huge number of small files. Setting the environment variable `LD_LIBRARY_PATH` ensures that the needed ffindex libraries are available:
 
         export LD_LIBRARY_PATH = $LD_LIBRARY_PATH:$MMDIR/lib/ffindex/src
         cd $MMDIR/src/lib/ffindex
         make
  
-Then create MMseqs binaries:
+Then build the MMseqs binaries:
 
         cd $MMDIR/src
         make
@@ -50,8 +54,8 @@ Before clustering, convert your FASTA database into ffindex format:
 
         fasta2ffindex DB.fasta DB
 
-Please ensure that in case of large input databases tmp provides enough free space. For
-the disc space requirements, see the user guide. 
+Please ensure that in case of large input databases the temporary folder tmp  provides enough free space.
+For the disc space requirements, see the user guide. 
 
         mkdir tmp
         mmseqs_cluster DB DB_clu tmp --cascaded
@@ -65,7 +69,7 @@ To run the more sensitive cascaded clustering and convert the result into FASTA 
         mmseqs_cluster DB DB_clu_s7 tmp --cascaded -s 7
         ffindex2fasta DB_clu_s7 DB_clu_s7.fasta
 
-###Search
+### Searching
 You can use the query database queryDB.fasta and target database targetDB.fasta to test the search workflow.
 Before clustering, you need to convert your database containing query sequences (queryDB.fasta) and your target database (targetDB.fasta) into ffindex format:
 
@@ -77,15 +81,27 @@ from queryDB.fasta. Then, generate a directory for tmp files:
 
         mkdir tmp
 
-Please ensure that in case of large input databases tmp provides enough free space. For
-the disc space requirements, see the user guide.
-To run the search, type:
+Please ensure that in case of large input databases tmp provides enough free space.
+For the disc space requirements, see the user guide.
+To run the search type:
 
         mmseqs_search queryDB targetDB outDB tmp
 
-Then, convert the result ffindex database into a FASTA formatted database: 
+Then convert the result ffindex database into a FASTA formatted database: 
 
         ffindex2fasta outDB outDB.fasta
 
-##License terms
-The software is made available under the terms of the GNU General Public License v3.0. Its contributors assume no responsibility for errors or omissions in the software.
+## License terms
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
