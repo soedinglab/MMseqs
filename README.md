@@ -16,7 +16,7 @@ You can calculate the memory requirements in bytes for L columns and N rows usin
         
         M = (4*N*L + 8*a^k) byte
 
-For a database containing N sequences with an average length L, the memory consumption of the index lists is (4*N*L) byte. Note that the memory consumption grows linearly with the size of the sequence database. 
+For a database containing N sequences with an average length L, the memory consumption of the index lists is `(4*N*L) byte`. Note that the memory consumption grows linearly with the size of the sequence database. 
 In addition, the index table stores the pointer array and two auxiliary arrays with the memory consumption where a is the size of the amino acid alphabet (usually 21 including the unknown amino acid X) and k is the k-mer size.
 
 ## Installation
@@ -31,7 +31,7 @@ First, set environment variables:
         export MMDIR=$HOME/path/to/mmseqs/
         export PATH=$PATH:$MMDIR/bin
 
-MMseqs uses ffindex, a fast and simple database for wrapping and accessing huge amounts of small files. Setting the environment variable LD_LIBRARY_PATH ensures that ffindex binaries are in the path:
+MMseqs uses ffindex, a fast and simple database for wrapping and accessing huge amounts of small files. Setting the environment variable `LD_LIBRARY_PATH` ensures that ffindex binaries are in the path:
 
         export LD_LIBRARY_PATH = $LD_LIBRARY_PATH:$MMDIR/lib/ffindex/src
         cd $MMDIR/src/lib/ffindex
