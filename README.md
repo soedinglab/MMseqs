@@ -37,8 +37,8 @@ First, set environment variables:
 
 MMseqs uses ffindex, a fast and simple database for wrapping and accessing a huge number of small files. Setting the environment variable `LD_LIBRARY_PATH` ensures that the needed ffindex libraries are available:
 
-        export LD_LIBRARY_PATH = $LD_LIBRARY_PATH:$MMDIR/lib/ffindex/src
-        cd $MMDIR/src/lib/ffindex
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MMDIR/lib/ffindex/src
+        cd $MMDIR/lib/ffindex
         make
  
 Then build the MMseqs binaries:
