@@ -27,7 +27,7 @@ The two auxiliary arrays consume `(8*a^k) byte`, with a being the size of the am
 ### Cloning from GIT
 If you want to compile the most recent version, simply clone the git repository. 
 
-        git clone git@bitbucket.org:soedinglab/mmseqs.git
+        git clone https://github.com/soedinglab/MMseqs.git
 
 ### Compile 
 First, set environment variables:
