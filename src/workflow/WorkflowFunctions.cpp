@@ -26,7 +26,7 @@ ffindex_index_t* openIndex(const char* indexFileName){
 std::string runStep(std::string inDBData, std::string inDBWorkingIndex, std::string targetDBData, std::string targetDBIndex, std::string tmpDir,
         std::string scoringMatrixFile, int maxSeqLen, int seqType,
         int kmerSize, int alphabetSize, size_t maxResListLen, int split, int skip, bool aaBiasCorrection, float zscoreThr, float sensitivity,
-        double evalThr, double covThr, int maxRejects,
+        double evalThr, double covThr, float seqIdThr, int maxRejects,
         int step_num, int restart, bool search, std::list<std::string>* tmpFiles){
 
     std::cout << "------------------------------------------------------------\n";
@@ -107,7 +107,7 @@ std::string runStep(std::string inDBData, std::string inDBWorkingIndex, std::str
         Clustering* clu = new Clustering(inDBData, inDBWorkingIndex,
                 alnDB_step, alnDB_step_index,
                 cluDB_step, cluDB_step_index,
-                0.0, 0, maxResListLen);
+                seqIdThr, 0, maxResListLen);
         clu->run(Clustering::SET_COVER);
         delete clu;
 

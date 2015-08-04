@@ -133,7 +133,7 @@ void runSearch(float sensitivity, size_t maxSeqLen, int seqType,
     std::string alnDB = runStep(queryDB, queryDBIndex, targetDB, targetDBIndex, tmpDir,
             scoringMatrixFile, maxSeqLen, seqType,
             kmerSize, alphabetSize, maxResListLen, split, skip, aaBiasCorrection, zscoreThr, sensitivity,
-            evalThr, covThr, INT_MAX,
+            evalThr, covThr, 0.0f, INT_MAX,
             1, 0, true, tmpFiles);
 
     std::string alnDBIndex = alnDB + ".index";
@@ -164,7 +164,7 @@ int main (int argc, const char * argv[]){
 
     // parameters for the alignment
     double evalThr = 0.001;
-    double covThr = 0.8;
+    double covThr = 0.0;
 
     std::string queryDB = "";
     std::string targetDB = "";
@@ -184,7 +184,7 @@ int main (int argc, const char * argv[]){
 
     runSearch(targetSens, maxSeqLen, seqType,
             kmerSize, alphabetSize, maxResListLen, split, skip, aaBiasCorrection, zscoreThr,
-            evalThr, covThr,
+            evalThr, covThr, 
             queryDB, targetDB, outDB, scoringMatrixFile, tmpDir);
 
 }

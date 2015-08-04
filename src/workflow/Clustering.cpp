@@ -19,6 +19,7 @@ void printUsage(){
             "GENERAL OPTIONS:\n"
             "--cascaded      \t\tStart the cascaded instead of simple clustering workflow.\n"
             "-s              \t[float]\tTarget sensitivity in the range [2:9] (default=4).\n"
+            "--id              \t[float]\tMinimum sequence identity of sequences in a cluster (default = 0.0)\n"
             "-cpu              \t[int]\tNumber of cores used for the computation (default=all cores).\n"
             "--max-seqs      \t\tMaximum result sequences per query (default=300).\n"
             "--max-seq-len   \t[int]\tMaximum sequence length (default=50000).\n"
@@ -35,7 +36,9 @@ void printUsage(){
     std::cout << usage;
 }
 
-void parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::string* ffindexOutDBBase, std::string* tmpDir, std::string* scoringMatrixFile, size_t* maxSeqLen, bool* cascaded, float* sens, size_t* maxResListLen, int* restart, int* step, int* threads){
+void parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::string* ffindexOutDBBase, 
+	       std::string* tmpDir, std::string* scoringMatrixFile, size_t* maxSeqLen, bool* cascaded, 
+               float* sens, float* seqIdThr, size_t* maxResListLen, int* restart, int* step, int* threads){
     if (argc < 4){
         printUsage();
         exit(EXIT_FAILURE);
@@ -71,6 +74,17 @@ void parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::s
                 exit(EXIT_FAILURE);
 
             }   
+        }
+        else if (strcmp(argv[i], "--id") == 0){
+            if (++i < argc){
+                *seqIdThr = atof(argv[i]);
+                i++;
+            }
+            else {
+                printUsage();
+                Debug(Debug::ERROR) << "No value provided for " << argv[i-1] << "\n";
+                exit(EXIT_FAILURE);
+            }
         }
         else if (strcmp(argv[i], "-m") == 0){
             if (++i < argc){
@@ -296,7 +310,7 @@ void mergeClusteringResults(std::string seqDB, std::string outDB, std::list<std:
 
 void runClustering(float sensitivity, size_t maxSeqLen, int seqType, 
         int kmerSize, int alphabetSize, size_t maxResListLen, int split, int skip, bool aaBiasCorrection, 
-        double evalThr, double covThr, 
+        double evalThr, double covThr, float seqIdThr,
         std::string inDB, std::string outDB, std::string scoringMatrixFile, std::string tmpDir, int restart){
 
     std::string inDBIndex = inDB + ".index";
@@ -311,7 +325,7 @@ void runClustering(float sensitivity, size_t maxSeqLen, int seqType,
     std::string cluDB = runStep(inDB, inDBIndex, inDB, inDBIndex, tmpDir,
             scoringMatrixFile, maxSeqLen, seqType,
             kmerSize, alphabetSize, maxResListLen, split, skip, aaBiasCorrection, zscoreThr, sensitivity,
-            evalThr, covThr, 10,
+            evalThr, covThr, seqIdThr, 10,
             1, restart, false, tmpFiles);
 
     std::string cluDBIndex = cluDB + ".index";
@@ -326,7 +340,7 @@ void runClustering(float sensitivity, size_t maxSeqLen, int seqType,
 
 void runCascadedClustering(float targetSensitivity, size_t maxSeqLen, int seqType,
         int kmerSize, int alphabetSize, size_t maxResListLen, int split, int skip, bool aaBiasCorrection,
-        double evalThr, double covThr,
+        double evalThr, double covThr, float seqIdThr,
         std::string inDB, std::string outDB, std::string scoringMatrixFile, std::string tmpDir, int restart, int step){
 
     std::cout << "\nRunning cascaded clustering for the database " << inDB << "\n";
@@ -368,7 +382,7 @@ void runCascadedClustering(float targetSensitivity, size_t maxSeqLen, int seqTyp
     cluDB = runStep(inDB, inDBWorkingIndex, inDB, inDBWorkingIndex, tmpDir,
             scoringMatrixFile, maxSeqLen, seqType, 
             kmerSize, alphabetSize, 50, split, 2, aaBiasCorrection, zscoreThr, sens,
-            evalThr, covThr, 10,
+            evalThr, covThr, seqIdThr, 10,
             1, local_restart, false, tmpFiles);
     cluSteps.push_back(cluDB);
 
@@ -396,7 +410,7 @@ void runCascadedClustering(float targetSensitivity, size_t maxSeqLen, int seqTyp
     cluDB = runStep(inDB, inDBWorkingIndex, inDB, inDBWorkingIndex, tmpDir,
             scoringMatrixFile, maxSeqLen, seqType,
             kmerSize, alphabetSize, 100, split, skip, aaBiasCorrection, zscoreThr, sens,
-            evalThr, covThr, 10,
+            evalThr, covThr, seqIdThr, 10,
             2, local_restart, false, tmpFiles);
     cluSteps.push_back(cluDB);
 
@@ -422,7 +436,7 @@ void runCascadedClustering(float targetSensitivity, size_t maxSeqLen, int seqTyp
     cluDB = runStep(inDB, inDBWorkingIndex, inDB, inDBWorkingIndex, tmpDir,
             scoringMatrixFile, maxSeqLen, seqType,
             kmerSize, alphabetSize, maxResListLen, split, skip, aaBiasCorrection, zscoreThr, sens,
-            evalThr, covThr, INT_MAX,
+            evalThr, covThr, seqIdThr, INT_MAX,
             3, local_restart, false, tmpFiles);
     cluSteps.push_back(cluDB);
 
@@ -440,6 +454,7 @@ int main (int argc, const char * argv[]){
     size_t maxSeqLen = 50000;
     int seqType = Sequence::AMINO_ACIDS;
     float targetSens = 4.0;
+    float seqIdThr = 4.0;
     int restart = 0;
     int step = 1;
     size_t maxResListLen = 300;
@@ -472,7 +487,7 @@ int main (int argc, const char * argv[]){
     std::string scoringMatrixFile(mmdir);
     scoringMatrixFile = scoringMatrixFile + "/data/blosum62.out";
 
-    parseArgs(argc, argv, &inDB, &outDB, &tmpDir, &scoringMatrixFile, &maxSeqLen, &cascaded, &targetSens, &maxResListLen, &restart, &step, &threads);
+    parseArgs(argc, argv, &inDB, &outDB, &tmpDir, &scoringMatrixFile, &maxSeqLen, &cascaded, &targetSens, &seqIdThr, &maxResListLen, &restart, &step, &threads);
 
 #ifdef OPENMP
     omp_set_num_threads(threads);
@@ -482,12 +497,12 @@ int main (int argc, const char * argv[]){
     if (cascaded)
         runCascadedClustering(targetSens, maxSeqLen, seqType,
                 kmerSize, alphabetSize, maxResListLen, split, skip, aaBiasCorrection, 
-                evalThr, covThr,
+                evalThr, covThr, seqIdThr,
                 inDB, outDB, scoringMatrixFile, tmpDir, restart, step);
     else
         runClustering(targetSens, maxSeqLen, seqType,
                 kmerSize, alphabetSize, maxResListLen, split, skip, aaBiasCorrection,
-                evalThr, covThr,
+                evalThr, covThr, seqIdThr,
                 inDB, outDB, scoringMatrixFile, tmpDir, restart);
 
 }

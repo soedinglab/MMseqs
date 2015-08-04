@@ -12,7 +12,7 @@ void printUsage(){
     usage.append("Written by Martin Steinegger (Martin.Steinegger@campus.lmu.de) & Maria Hauser (mhauser@genzentrum.lmu.de).\n\n");
     usage.append("USAGE: mmseqs_clu <sequenceDB> <alnResultsDB> <outDB> [opts]\n"
              "-g              \t\tgreedy clustering by sequence length (default: set cover clustering algorithm).\n"
-             "-s              \t[float]\tMinimum sequence identity of sequences in a cluster (default = 0.0)\n"
+             "--id              \t[float]\tMinimum sequence identity of sequences in a cluster (default = 0.0)\n"
              "--max-seqs      \t[int]\tMaximum result sequences per query (default=100)\n"
 //             "--check              \t\tCheck clusters (default = off)\n"
              "-v              \t[int]\tVerbosity level: 0=NOTHING, 1=ERROR, 2=WARNING, 3=INFO (default=3).\n"
@@ -39,7 +39,7 @@ void parseArgs(int argc, const char** argv, std::string* ffindexAlnDBBase, std::
             *validateClustering = 1;
             i++;
         }
-        else if (strcmp(argv[i], "-s") == 0){
+        else if (strcmp(argv[i], "--id") == 0){
             if (++i < argc){
                 *seqIdThr = atof(argv[i]);
                 i++;
