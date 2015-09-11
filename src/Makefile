@@ -48,8 +48,8 @@ CLUSTER2FFINDEX_OBJS := $(patsubst %.cpp, %.o, $(CLUSTER2FFINDEX_SOURCES))
 TT_OBJS := $(patsubst %.cpp, %.o, $(TT_SOURCES))
 
 CC = g++ 
-CFLAGS = -g -Wall  -I../../lib/ffindex/src/ -L../../lib/ffindex/src/ -lffindex  -Wno-write-strings
-#CFLAGS = -fopenmp -DOPENMP=1 -m64 -ffast-math -ftree-vectorize -O3 -Wno-write-strings -I../lib/ffindex/src/ -fno-strict-aliasing 
+#CFLAGS = -g -Wall  -I../lib/ffindex/src/ -L../lib/ffindex/src/ -lffindex  -Wno-write-strings
+CFLAGS = -fopenmp -DOPENMP=1 -m64 -ffast-math -ftree-vectorize -O3 -Wno-write-strings -I../lib/ffindex/src/ -fno-strict-aliasing 
 LDFLAGS = -L../lib/ffindex/src/ -lffindex
 
 TARGETS = mmseqs_pref mmseqs_aln mmseqs_clu mmseqs_search mmseqs_cluster mmseqs_update ffindex2fasta cluster2ffindex fasta2ffindex time_test
