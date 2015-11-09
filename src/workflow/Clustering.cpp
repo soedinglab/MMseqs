@@ -454,7 +454,7 @@ int main (int argc, const char * argv[]){
     size_t maxSeqLen = 50000;
     int seqType = Sequence::AMINO_ACIDS;
     float targetSens = 4.0;
-    float seqIdThr = 4.0;
+    float seqIdThr = 0.0;
     int restart = 0;
     int step = 1;
     size_t maxResListLen = 300;
