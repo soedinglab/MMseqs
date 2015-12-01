@@ -254,7 +254,8 @@ void mergeClusteringResults(std::string seqDB, std::string outDB, std::list<std:
             // afterwards, delete the added cluster from the clustering
             while (std::getline(lineSs, val, '\n')){
                 int seqId = dbr->getId(val.c_str());
-                mergedClustering[cluId]->splice(mergedClustering[cluId]->end(), *mergedClustering[seqId]);
+                if(seqId != cluId) // to avoid copies of the same cluster list
+                    mergedClustering[cluId]->splice(mergedClustering[cluId]->end(), *mergedClustering[seqId]);
             }
         }
         cluStepDbr->close();
