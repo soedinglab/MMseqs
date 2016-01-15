@@ -36,14 +36,15 @@ void printUsage(){
     std::cout << usage;
 }
 
-void parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::string* ffindexOutDBBase, 
+bool parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::string* ffindexOutDBBase, 
 	       std::string* tmpDir, std::string* scoringMatrixFile, size_t* maxSeqLen, bool* cascaded, 
                float* sens, float* seqIdThr, size_t* maxResListLen, int* restart, int* step, int* threads){
+    bool changed=false;
     if (argc < 4){
         printUsage();
         exit(EXIT_FAILURE);
     }
-
+   
     ffindexInDBBase->assign(argv[1]);
     ffindexOutDBBase->assign(argv[2]);
     tmpDir->assign(argv[3]);
@@ -122,10 +123,12 @@ void parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::s
         else if (strcmp(argv[i], "--cascaded") == 0){
             *cascaded = true;
             i++;
+            changed = true;
         }
         else if (strcmp(argv[i], "-s") == 0){
             if (++i < argc){
                 *sens = atof(argv[i]);
+                changed = true;
                 if (*sens < 2.0 || *sens > 9.0){
                     Debug(Debug::ERROR) << "Please choose sensitivity in the range [2:9].\n";
                     exit(EXIT_FAILURE);
@@ -172,6 +175,7 @@ void parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::s
         std::cout << "Only cascaded clustering has clustering steps. Please set clustering mode to cascaded or leave the step parameter out.\n";
         exit(EXIT_FAILURE);
     }
+    return changed;
 }
 
 void extractNewIndex(std::string seqDBIndex, std::string cluDBIndex, std::string newIndexFileName){
@@ -196,6 +200,23 @@ void extractNewIndex(std::string seqDBIndex, std::string cluDBIndex, std::string
     fclose(clu_index->file);
     fclose(new_index_file);
 
+}
+
+std::pair<float, bool> setAutomaticThreshold(float seqId){
+    float sens;
+    bool cascaded = true;
+    if(seqId <= 0.3){
+        sens = 7.0;
+        cascaded = true;
+    } else if (seqId > 0.7){
+        sens = 1.0;
+    } else {
+        sens = 1.0 + (1.5 * (0.7 - seqId) * 10);
+    }
+    if(sens <= 2.0){
+        cascaded = false;
+    }
+    return std::make_pair(sens, cascaded);
 }
 
 void mergeClusteringResults(std::string seqDB, std::string outDB, std::list<std::string> cluSteps){
@@ -488,8 +509,12 @@ int main (int argc, const char * argv[]){
     std::string scoringMatrixFile(mmdir);
     scoringMatrixFile = scoringMatrixFile + "/data/blosum62.out";
 
-    parseArgs(argc, argv, &inDB, &outDB, &tmpDir, &scoringMatrixFile, &maxSeqLen, &cascaded, &targetSens, &seqIdThr, &maxResListLen, &restart, &step, &threads);
-
+    bool changed = parseArgs(argc, argv, &inDB, &outDB, &tmpDir, &scoringMatrixFile, &maxSeqLen, &cascaded, &targetSens, &seqIdThr, &maxResListLen, &restart, &step, &threads);
+    if(changed == false){
+    	std::pair<float, bool> settings = setAutomaticThreshold(seqIdThr);
+        targetSens = settings.first;
+        cascaded = settings.second;
+    }
 #ifdef OPENMP
     omp_set_num_threads(threads);
 #endif
