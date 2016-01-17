@@ -16,7 +16,7 @@ Copyright 2006 by Michael Farrar.  All rights reserved.
 
 
 #include <emmintrin.h>
-
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
