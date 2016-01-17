@@ -138,7 +138,7 @@ void copy(std::string inFile, std::string outFile){
 float getZscoreForSensitivity (float sensitivity){
     float zscoreThr = 50.0;
 
-/*    if (1.0 <= sensitivity && sensitivity < 2.0)
+    if (1.0 <= sensitivity && sensitivity < 2.0)
         zscoreThr = 700.0;
     else if (2.0 <= sensitivity && sensitivity < 3.0)
         zscoreThr = 200.0;
@@ -154,7 +154,7 @@ float getZscoreForSensitivity (float sensitivity){
         zscoreThr = 20.0;
     else if (8.0 <= sensitivity && sensitivity <= 9.0)
         zscoreThr = 10.0;
-*/
+
     return zscoreThr;
 }
 
