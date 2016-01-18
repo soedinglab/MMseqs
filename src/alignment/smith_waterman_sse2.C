@@ -188,7 +188,7 @@ template <typename T, size_t Elements> void SmithWaterman::createQueryProfile (
 	for (int32_t nt = 0; LIKELY(nt < aaSize); nt ++) {
 		for (int32_t i = 0; i < segLen; i ++) {
 			int32_t  j = i;
-			for (int32_t segNum = 0; LIKELY(segNum < Elements) ; segNum ++) {
+			for (size_t segNum = 0; LIKELY(segNum < Elements) ; segNum ++) {
 				*t++ = (j>= query_length) ? bias : mat[nt * aaSize + query_sequence[j]] + bias;
 				j += segLen;
 			}
@@ -638,7 +638,7 @@ void SmithWaterman::ssw_init (const Sequence* q,
 
     profile->bias = 0;
     
-    for(size_t i = 0; i < q->L; i++){
+    for(int i = 0; i < q->L; i++){
         profile->query_sequence[i] = (int8_t) q->int_sequence[i];
     }
     if (score_size == 0 || score_size == 2) {

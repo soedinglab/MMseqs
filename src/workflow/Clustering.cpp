@@ -19,6 +19,7 @@ void printUsage(){
             "GENERAL OPTIONS:\n"
             "--cascaded      \t\tStart the cascaded instead of simple clustering workflow.\n"
             "-s              \t[float]\tTarget sensitivity in the range [2:9] (default=4).\n"
+            "-c              \t[float]\tMinimum alignment coverage (default=0.8).\n"
             "--id              \t[float]\tMinimum sequence identity of sequences in a cluster (default = 0.0)\n"
             "-cpu              \t[int]\tNumber of cores used for the computation (default=all cores).\n"
             "--max-seqs      \t\tMaximum result sequences per query (default=300).\n"
@@ -38,7 +39,7 @@ void printUsage(){
 
 bool parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::string* ffindexOutDBBase, 
 	       std::string* tmpDir, std::string* scoringMatrixFile, size_t* maxSeqLen, bool* cascaded, 
-               float* sens, float* seqIdThr, size_t* maxResListLen, int* restart, int* step, int* threads){
+               float* sens, float* seqIdThr, double *covThr, size_t* maxResListLen, int* restart, int* step, int* threads){
     bool changed=false;
     if (argc < 4){
         printUsage();
@@ -133,6 +134,12 @@ bool parseArgs(int argc, const char** argv, std::string* ffindexInDBBase, std::s
                     Debug(Debug::ERROR) << "Please choose sensitivity in the range [2:9].\n";
                     exit(EXIT_FAILURE);
                 }
+                i++;
+            }
+        }
+        else if (strcmp(argv[i], "-c") == 0){
+            if (++i < argc){
+                *covThr = atof(argv[i]);
                 i++;
             }
         }
@@ -476,7 +483,7 @@ int main (int argc, const char * argv[]){
     size_t maxSeqLen = 50000;
     int seqType = Sequence::AMINO_ACIDS;
     float targetSens = 4.0;
-    float seqIdThr = 0.0;
+    float seqIdThr = 0.3;
     int restart = 0;
     int step = 1;
     size_t maxResListLen = 300;
@@ -509,7 +516,8 @@ int main (int argc, const char * argv[]){
     std::string scoringMatrixFile(mmdir);
     scoringMatrixFile = scoringMatrixFile + "/data/blosum62.out";
 
-    bool changed = parseArgs(argc, argv, &inDB, &outDB, &tmpDir, &scoringMatrixFile, &maxSeqLen, &cascaded, &targetSens, &seqIdThr, &maxResListLen, &restart, &step, &threads);
+    bool changed = parseArgs(argc, argv, &inDB, &outDB, &tmpDir, &scoringMatrixFile, &maxSeqLen, &cascaded, &targetSens, &seqIdThr, 
+                             &covThr, &maxResListLen, &restart, &step, &threads);
     if(changed == false){
     	std::pair<float, bool> settings = setAutomaticThreshold(seqIdThr);
         targetSens = settings.first;
