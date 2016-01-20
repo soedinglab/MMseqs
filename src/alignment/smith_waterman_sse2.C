@@ -5,7 +5,7 @@
  *******************************************************************/
 
 /*
-   Written by Michael Farrar, 2006 (alignment), Mengyao Zhao (SSW Library) and Martin Steinegger, 2015 (adapt it for MMseqs).
+   Written by Michael Farrar, 2006 (alignment), Mengyao Zhao (SSW Library) and Martin Steinegger, 2015 (adapted it for MMseqs).
 */
 
 #include "smith_waterman_sse2.h"
