@@ -155,6 +155,10 @@ int main(int argn,const char **argv)
 	//printf("name: %s %d\n", seq->name.s, seq->name.l);
 	//printf("seq:  %s %d\n", seq->seq.s,  seq->seq.l);
 	std::string id = parseFastaHeader(std::string(seq->name.s));
+        if(id.size() >= 31){
+                perror("maximum fasta identifier limit is 31 char");
+                exit(EXIT_FAILURE);
+        }
 	header_line.append(seq->name.s, seq->name.l);
 	if(seq->comment.l)  { 
 		header_line.append(" ",1);
