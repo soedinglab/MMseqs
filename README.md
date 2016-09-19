@@ -1,7 +1,7 @@
-# THIS REPOSITORY IS NOT MAINTAINED ANYMORE
+# PLEASE USE MMSEQS2 (THIS VERSION IS NOT UNDER DEVELOPMENT ANYMORE)
 Please use MMseqs2 instead of MMseqs. It is faster, more sensitive, clusters better and is more userfriendly.
 You can find MMseqs2 here: <https://github.com/soedinglab/MMseqs2> 
-**This repository is not maintained anymore.**
+**This repository is not further developed.**
 
 # MMseqs 
 MMseqs (Many-against-Many sequence searching) is a software suite for very fast protein sequence searches and clustering of huge protein sequence data sets. 
