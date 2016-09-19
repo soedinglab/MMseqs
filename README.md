@@ -1,4 +1,4 @@
-# PLEASE USE MMSEQS2 (THIS VERSION IS NOT UNDER DEVELOPMENT ANYMORE)
+# PLEASE USE MMSEQS2 (THIS VERSION IS NOT FURTHER DEVELOPMENT ANYMORE)
 Please use MMseqs2 instead of MMseqs. It is faster, more sensitive, clusters better and is more userfriendly.
 You can find MMseqs2 here: <https://github.com/soedinglab/MMseqs2> 
 **This repository is not further developed.**
